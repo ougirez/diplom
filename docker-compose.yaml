@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:13.8-alpine
+    restart: always
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_DB=diplom
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - TZ='utc'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 3s
+      timeout: 1s
+      retries: 30
+
+  db:
+    image: busybox:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  default:
+    name: api
+    external: true

@@ -1,0 +1,15 @@
+version: 1.0.0
+
+service:
+  bind:
+    address: 0.0.0.0
+    port: 8080
+  jwt_ttl: 604800
+  telegram_token:
+  jwt_secret:
+  secret:
+  exchange_rates_secret:
+  mock_enabled: true
+
+postgres:
+  connection_string:

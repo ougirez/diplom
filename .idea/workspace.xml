@@ -4,7 +4,51 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b79ef8c8-3ce0-4bd3-ad43-7c9b78feadbb" name="Changes" comment="init commit" />
+    <list default="true" id="b79ef8c8-3ce0-4bd3-ad43-7c9b78feadbb" name="Changes" comment="http, postgres">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/diplom.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db/db.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/api/api.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/api/binder.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/api/controller/auth.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/api/controller/backfill_fgbu_data.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/api/controller/common.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/api/controller/controller.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/api/error_handler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/api/middleware.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/api/validator.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/domain/admin.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/domain/common.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/domain/crypto.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/domain/region_item.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/domain/types.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/domain/user.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/constants/context_keys.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/constants/errors.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/constants/jwt.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/constants/requests.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/helpers/helpers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/logger/logger.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/store/common.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/store/region.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/store/store.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/store/user.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/utils/auth_token.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/utils/cookie.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/service/auth/auth_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/service/region/region_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/service/user/user_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/config/config_default.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,25 +76,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/ilianovikov&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;go.vgo&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/Users/ilianovikov/GolandProjects/kursach/resources/config",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "settings.editor.selected.configurable": "go.vgo"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources/config" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/internal/api" />
       <recent name="$PROJECT_DIR$/cmd" />
@@ -60,7 +112,7 @@
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="diplom" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind />
+      <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <method v="2" />
@@ -86,10 +138,14 @@
     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
       <module name="diplom" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind />
+      <kind value="DIRECTORY" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml" />
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -105,7 +161,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="init commit" />
+    <MESSAGE value="http, postgres" />
+    <option name="LAST_COMMIT_MESSAGE" value="http, postgres" />
   </component>
   <component name="VgoProject">
     <environment>
