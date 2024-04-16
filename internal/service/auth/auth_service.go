@@ -33,7 +33,7 @@ func NewService(store *store.Store) *Service {
 //	}
 //
 //	mainAccount, err := svc.CreateAccount(ctx, &domain.CreateAccountRequest{
-//		UserID:   user.ID,
+//		UserID:   user.ProviderID,
 //		Currency: "RUB",
 //	})
 //	user.MainAccountNumber = mainAccount.Account.Number
@@ -42,7 +42,7 @@ func NewService(store *store.Store) *Service {
 //		return nil, err
 //	}
 //
-//	authToken, err := utils.GenerateAuthToken(&utils.AuthTokenWrapper{UserID: user.ID})
+//	authToken, err := utils.GenerateAuthToken(&utils.AuthTokenWrapper{UserID: user.ProviderID})
 //	if err != nil {
 //		return nil, err
 //	}
@@ -60,9 +60,9 @@ func NewService(store *store.Store) *Service {
 //		return nil, err
 //	}
 //
-//	logger.Debugf(ctx, "login: userID: [%v]", user.ID)
+//	logger.Debugf(ctx, "login: userID: [%v]", user.ProviderID)
 //
-//	authToken, err := utils.GenerateAuthToken(&utils.AuthTokenWrapper{UserID: user.ID})
+//	authToken, err := utils.GenerateAuthToken(&utils.AuthTokenWrapper{UserID: user.ProviderID})
 //	if err != nil {
 //		return nil, err
 //	}

@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (c *Controller) BackFillFGBUData(ctx echo.Context) error {
+func (c *Controller) GetRegionItems(ctx echo.Context) error {
 	regionItems, err := c.service.ParseAndSaveProviderItems(ctx.Request().Context(), "https://inform-raduga.ru/fgbu")
 	if err != nil {
 		return err

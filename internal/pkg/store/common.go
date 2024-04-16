@@ -9,8 +9,11 @@ import (
 )
 
 const (
-	tableUsers       = "users"
-	tableRegionItems = "region_items"
+	tableUsers             = "users"
+	tableRegions           = "regions"
+	tableProviders         = "providers"
+	tableGroupedCategories = "grouped_categories"
+	tableCategories        = "categories"
 )
 
 var mapping = map[error]error{pgx.ErrNoRows: constants.ErrDBNotFound}

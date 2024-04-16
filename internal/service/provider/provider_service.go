@@ -1,4 +1,4 @@
-package region
+package provider
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/cenkalti/backoff/v4"
 	"github.com/ougirez/diplom/internal/domain"
+	"github.com/ougirez/diplom/internal/domain/dto"
 	"github.com/ougirez/diplom/internal/pkg/store"
 	"github.com/shopspring/decimal"
 	"golang.org/x/sync/errgroup"
@@ -21,11 +22,11 @@ type Service struct {
 	store store.Store
 }
 
-func NewRegionItemService(regionItemDAO store.Store) *Service {
+func NewProviderItemService(regionItemDAO store.Store) *Service {
 	return &Service{store: regionItemDAO}
 }
 
-func (s *Service) ParseAndSaveRegionItems(ctx context.Context, mainURL string) ([]*domain.RegionItem, error) {
+func (s *Service) ParseAndSaveProviderItems(ctx context.Context, mainURL string) ([]*dto.ProviderDto, error) {
 	// Отправляем GET запрос
 	resp, err := http.Get(mainURL)
 	if err != nil {
@@ -46,7 +47,7 @@ func (s *Service) ParseAndSaveRegionItems(ctx context.Context, mainURL string) (
 		return nil, fmt.Errorf("goquery.NewDocumentFromReader: %w", err)
 	}
 
-	regionItems := make([]*domain.RegionItem, 0, 100)
+	regionItems := make([]*domain.Provider, 0, 100)
 	regionItemsMx := sync.Mutex{}
 	eg, egCtx := errgroup.WithContext(ctx)
 	doc.Find("div#block-mcxdm-mcxdm-system-main article table").EachWithBreak(func(i int, table *goquery.Selection) bool {
@@ -56,23 +57,28 @@ func (s *Service) ParseAndSaveRegionItems(ctx context.Context, mainURL string) (
 			regionName := tr.Find("th").Text()
 			regionHref, ok := tr.Find("td a").Attr("href")
 			if !ok {
-				err = fmt.Errorf("couldn't find href for region %s", regionName)
+				err = fmt.Errorf("couldn't find href for provider %s", regionName)
 				return false
 			}
 
 			id := strings.Split(regionHref, "/")[len(strings.Split(regionHref, "/"))-1]
 
 			eg.Go(func() error {
-				regionItem, err := s.parseRegionItem(egCtx, fmt.Sprintf("%s/%s", mainURL, id))
+				regionDto, err := s.parseRegionItem(egCtx, fmt.Sprintf("%s/%s", mainURL, id))
 				if err != nil {
 					return fmt.Errorf("parseRegionItem, id-%s: %w", id, err)
 				}
 
-				regionItem.ID = id
-				regionItem.RegionName = regionName
-				regionItem.DistrictName = districtName
+				idInt, err := strconv.Atoi(id)
+				if err != nil {
+					return fmt.Errorf("failed to parse id: %w", err)
+				}
 
-				err = s.store.Insert(ctx, regionItem)
+				regionDto.ProviderID = int64(idInt)
+				regionDto.RegionName = regionName
+				regionDto.DistrictName = districtName
+
+				regionItem, err := s.store.Insert(ctx, regionDto)
 				if err != nil {
 					return fmt.Errorf("store.Insert, region_name-%s: %w", regionName, err)
 				}
@@ -102,11 +108,11 @@ func (s *Service) ParseAndSaveRegionItems(ctx context.Context, mainURL string) (
 	return regionItems, nil
 }
 
-func (s *Service) parseRegionItem(ctx context.Context, regionURL string) (*domain.RegionItem, error) {
+func (s *Service) parseRegionItem(ctx context.Context, regionURL string) (*dto.ProviderDto, error) {
 	// Отправляем GET запрос
 	resp, err := http.Get(regionURL)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get region doc: %w", err)
+		return nil, fmt.Errorf("failed to get provider doc: %w", err)
 	}
 	defer func() {
 		err = resp.Body.Close()
@@ -131,10 +137,10 @@ func (s *Service) parseRegionItem(ctx context.Context, regionURL string) (*domai
 	return regionItem, nil
 }
 
-func parseRegionPage(ctx context.Context, doc *goquery.Document) (*domain.RegionItem, error) {
+func parseRegionPage(ctx context.Context, doc *goquery.Document) (*dto.ProviderDto, error) {
 	// Extract data by year
-	regionItem := new(domain.RegionItem)
-	regionItem.GroupedCategories = make(map[string]*domain.GroupedCategory)
+	regionItem := new(dto.ProviderDto)
+	regionItem.GroupedCategories = make(map[string]*dto.GroupedCategory)
 
 	var err error
 	doc.Find("ol#fr-main li").EachWithBreak(func(_ int, li *goquery.Selection) bool {
@@ -217,7 +223,7 @@ func parseRegionPage(ctx context.Context, doc *goquery.Document) (*domain.Region
 	return regionItem, nil
 }
 
-func fillMainTableDataForYear(li *goquery.Selection, regionItem *domain.RegionItem, year domain.Year) error {
+func fillMainTableDataForYear(li *goquery.Selection, regionItem *dto.ProviderDto, year domain.Year) error {
 	cols := []string{
 		"Фактически используются в с/х производстве",
 		"Фактически полито/осушено",
@@ -315,7 +321,7 @@ func fillMainTableDataForYear(li *goquery.Selection, regionItem *domain.RegionIt
 	return nil
 }
 
-func fillIrrigationIndicators(ctx context.Context, regionItem *domain.RegionItem, url string, year domain.Year) (err error) {
+func fillIrrigationIndicators(ctx context.Context, regionItem *dto.ProviderDto, url string, year domain.Year) (err error) {
 	var resp *http.Response
 	err = backoff.Retry(
 		func() error {
@@ -402,7 +408,7 @@ func fillIrrigationIndicators(ctx context.Context, regionItem *domain.RegionItem
 	return
 }
 
-//func fillHistoryData(regionItem *domain.RegionItem, wg *sync.WaitGroup, url string, year domain.Year) {
+//func fillHistoryData(regionItem *domain.Provider, wg *sync.WaitGroup, url string, year domain.Year) {
 //	defer wg.Done()
 //
 //	resp, err := http.Get(url)

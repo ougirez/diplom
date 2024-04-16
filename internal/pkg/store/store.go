@@ -2,20 +2,23 @@ package store
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/ougirez/diplom/internal/domain"
+	"github.com/ougirez/diplom/internal/pkg/store/xpgx"
 )
+
+type Tx = xpgx.Tx
+type Pool = xpgx.Pool
 
 type Store interface {
 	UserStore
-	RegionItemStore
+	ProviderStore
 }
 
 type store struct {
-	pool *pgxpool.Pool
+	pool Pool
 }
 
-func NewStore(pool *pgxpool.Pool) Store {
+func NewStore(pool Pool) Store {
 	return &store{pool}
 }
 

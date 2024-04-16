@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/ougirez/diplom/internal/pkg/store"
-	regionService "github.com/ougirez/diplom/internal/service/region"
+	regionService "github.com/ougirez/diplom/internal/service/provider"
 )
 
 type Controller struct {

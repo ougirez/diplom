@@ -6,7 +6,7 @@ import (
 	"github.com/ougirez/diplom/internal/api/controller"
 	"github.com/ougirez/diplom/internal/pkg/logger"
 	"github.com/ougirez/diplom/internal/pkg/store"
-	"github.com/ougirez/diplom/internal/service/region"
+	"github.com/ougirez/diplom/internal/service/provider"
 
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -14,7 +14,7 @@ import (
 type APIService struct {
 	router  *echo.Echo
 	store   store.Store
-	service *region.Service
+	service *provider.Service
 }
 
 func (svc *APIService) Serve(addr string) {
@@ -33,7 +33,7 @@ func NewAPIService(store store.Store) (*APIService, error) {
 	svc.router.Use(middleware.Logger())
 	svc.router.HTTPErrorHandler = httpErrorHandler
 
-	svc.service = region.NewRegionItemService(store)
+	svc.service = provider.NewProviderItemService(store)
 
 	api := svc.router.Group("/api/v1")
 	controller := controller.NewController(store, svc.service)

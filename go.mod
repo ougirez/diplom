@@ -7,6 +7,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.9.1
 	github.com/bytedance/sonic v1.11.3
 	github.com/cenkalti/backoff/v4 v4.3.0
+	github.com/georgysavva/scany/v2 v2.1.3
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.6.0

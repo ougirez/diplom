@@ -5,49 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b79ef8c8-3ce0-4bd3-ad43-7c9b78feadbb" name="Changes" comment="http, postgres">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/diplom.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/db.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/api/api.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/api/binder.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/api/controller/auth.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/api/controller/backfill_fgbu_data.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/api/controller/common.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/api/controller/controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/api/error_handler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/api/middleware.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/api/validator.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/domain/admin.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/domain/common.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/domain/crypto.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/domain/region_item.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/domain/types.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/domain/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/constants/context_keys.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/constants/errors.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/constants/jwt.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/constants/requests.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/helpers/helpers.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/logger/logger.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/store/common.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/store/region.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/store/store.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/store/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/utils/auth_token.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/pkg/utils/cookie.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/service/auth/auth_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/service/region/region_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/service/user/user_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/config/config_default.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/api/controller/region_items.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/domain/dto/region_item.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/store/provider.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/store/xpgx/executor.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/store/xpgx/pool.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/pkg/store/xpgx/tx.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/service/provider/list_region_names.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/db.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/api/api.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/api.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/api/controller/backfill_fgbu_data.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/controller/backfill_fgbu_data.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/api/controller/controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/controller/controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/domain/region_item.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/domain/region_item.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/pkg/constants/requests.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/pkg/constants/requests.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/pkg/store/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/pkg/store/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/pkg/store/region.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/pkg/store/region.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/pkg/store/store.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/pkg/store/store.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/service/auth/auth_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/service/auth/auth_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/service/region/region_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/service/provider/provider_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +66,7 @@
     "git-widget-placeholder": "main",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/ilianovikov/GolandProjects/kursach/resources/config",
+    "last_opened_file_path": "/Users/ilianovikov/GolandProjects/diplom",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "settings.editor.selected.configurable": "go.vgo"
@@ -104,6 +82,7 @@
       <recent name="$PROJECT_DIR$/resources/config" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/domain/dto" />
       <recent name="$PROJECT_DIR$/internal/api" />
       <recent name="$PROJECT_DIR$/cmd" />
     </key>
@@ -145,7 +124,9 @@
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
-      <deployment type="docker-compose.yml" />
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -158,6 +139,17 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init commit" />

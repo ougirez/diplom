@@ -2,42 +2,21 @@ package store
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
+	"github.com/Masterminds/squirrel"
 	"github.com/ougirez/diplom/internal/domain"
+	"strings"
 )
 
-type RegionItemStore interface {
-	Insert(ctx context.Context, regionItem *domain.RegionItem) error
-}
+func (s *store) GetRegionByName(ctx context.Context, regionName string) (*domain.Region, error) {
+	query := builder().Select(strings.Split(regionsColumns, ", ")...).
+		From(tableRegions).
+		Where(squirrel.Eq{"region_name": regionName})
 
-var regionItemColumns = []string{"id", "region_name", "district_name", "group_categories"}
-
-func (s *store) Insert(ctx context.Context, regionItem *domain.RegionItem) error {
-	groupCategoriesJSON, err := json.Marshal(regionItem.GroupedCategories)
+	var selected domain.Region
+	err := s.pool.Selectx(ctx, &selected, query)
 	if err != nil {
-		return fmt.Errorf("failed to marshal group categories: %w", err)
+		return nil, err
 	}
 
-	query := builder().Insert(tableRegionItems).
-		Columns(regionItemColumns...).
-		Values(regionItem.ID, regionItem.RegionName, regionItem.DistrictName, groupCategoriesJSON).
-		Suffix(`
-on conflict (id)
-do update 
-set region_name = excluded.region_name,
-	district_name = excluded.district_name,
-	group_categories = excluded.group_categories
-`)
-
-	sql, args, err := query.ToSql()
-	if err != nil {
-		return err
-	}
-
-	_, err = s.pool.Exec(ctx, sql, args...)
-	if err != nil {
-		return err
-	}
-	return nil
+	return &selected, nil
 }

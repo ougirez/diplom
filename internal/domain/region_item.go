@@ -1,87 +1,39 @@
 package domain
 
-import (
-	"fmt"
-	"sync"
-)
+import "time"
 
 type Year = int
 
-type Category struct {
-	Unit       string           `bson:"unit"`
-	YearData   map[Year]float64 `bson:"year_data"`
-	yearDataMx sync.Mutex
+type Region struct {
+	ID           int64     `db:"id"`
+	RegionName   string    `db:"region_name"`
+	DistrictName string    `db:"district_name"`
+	CreatedAt    time.Time `db:"created_at"`
+	UpdatedAt    time.Time `db:"updated_at"`
 }
 
-func (c *Category) PutData(year Year, data float64, unit string) error {
-	c.yearDataMx.Lock()
-	defer c.yearDataMx.Unlock()
-
-	if c.Unit == "" {
-		c.Unit = unit
-	} else {
-		if c.Unit != unit {
-			return fmt.Errorf("different units for one cateogory: %s and %s", c.Unit, unit)
-		}
-	}
-
-	c.YearData[year] = data
-	return nil
+type Provider struct {
+	ID           int64     `db:"id"`
+	RegionID     int64     `db:"region_id"`
+	ProviderName string    `db:"provider_name"`
+	CreatedAt    time.Time `db:"created_at"`
+	UpdatedAt    time.Time `db:"updated_at"`
 }
 
 type GroupedCategory struct {
-	Categories   map[string]*Category `bson:"categories"`
-	categoriesMx sync.Mutex
+	ID        int64     `db:"id"`
+	RegionID  int64     `db:"region_id"`
+	Name      string    `db:"name"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
 
-func (gc *GroupedCategory) PutCategory(categoryName string, category *Category) {
-	gc.categoriesMx.Lock()
-	defer gc.categoriesMx.Unlock()
-
-	gc.Categories[categoryName] = category
-}
-
-func (gc *GroupedCategory) GetCategory(categoryName string) *Category {
-	gc.categoriesMx.Lock()
-	defer gc.categoriesMx.Unlock()
-
-	category, ok := gc.Categories[categoryName]
-	if !ok {
-		category = &Category{
-			YearData: make(map[Year]float64),
-		}
-		gc.Categories[categoryName] = category
-	}
-
-	return category
-}
-
-type RegionItem struct {
-	ID                string                      `bson:"_id"`
-	DistrictName      string                      `bson:"district_name"`
-	RegionName        string                      `bson:"region_name"`
-	GroupedCategories map[string]*GroupedCategory `bson:"grouped_categories"`
-	groupCategoriesMx sync.Mutex
-}
-
-func (r *RegionItem) PutGroupCategory(groupedCategoryName string, groupCategory *GroupedCategory) {
-	r.groupCategoriesMx.Lock()
-	defer r.groupCategoriesMx.Unlock()
-
-	r.GroupedCategories[groupedCategoryName] = groupCategory
-}
-
-func (r *RegionItem) GetGroupCategory(groupedCategoryName string) *GroupedCategory {
-	r.groupCategoriesMx.Lock()
-	defer r.groupCategoriesMx.Unlock()
-
-	groupedCategory, ok := r.GroupedCategories[groupedCategoryName]
-	if !ok {
-		groupedCategory = &GroupedCategory{
-			Categories: make(map[string]*Category),
-		}
-		r.GroupedCategories[groupedCategoryName] = groupedCategory
-	}
-
-	return groupedCategory
+type Category struct {
+	ID        int64            `db:"id"`
+	GroupID   int64            `db:"group_id"`
+	Name      string           `db:"name"`
+	Unit      string           `db:"unit"`
+	YearData  map[Year]float64 `db:"year_data"`
+	CreatedAt time.Time        `db:"created_at"`
+	UpdatedAt time.Time        `db:"updated_at"`
 }
