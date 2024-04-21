@@ -17,14 +17,14 @@ type ProviderStore interface {
 var (
 	regionsColumns         = "id, region_name, district_name, created_at, updated_at"
 	providersColumns       = "id, region_id, provider_name, created_at, updated_at"
-	groupedCategoryColumns = "id, region_id, name, created_at, updated_at"
+	groupedCategoryColumns = "id, provider_id, name, created_at, updated_at"
 	categoryColumns        = "id, grouped_category_id, name, unit, year_data, created_at, updated_at"
 )
 
 func (s *store) Insert(ctx context.Context, providerDto *dto.ProviderDto) (*domain.Provider, error) {
-	region, err := s.GetRegionByName(ctx, providerDto.RegionName)
+	region, err := s.insertRegion(ctx, providerDto.RegionName, providerDto.DistrictName)
 	if err != nil {
-		return nil, fmt.Errorf("GetRegionByName: %w", err)
+		return nil, fmt.Errorf("insertRegion: %w", err)
 	}
 
 	item, err := s.insertProvider(ctx, region.ID, providerDto)
@@ -47,8 +47,32 @@ func (s *store) Insert(ctx context.Context, providerDto *dto.ProviderDto) (*doma
 	return item, nil
 }
 
-func (s *store) insertProvider(ctx context.Context, regionID int64, regionItem *dto.ProviderDto) (*domain.Provider, error) {
+func (s *store) insertRegion(ctx context.Context, regionName string, districtName string) (*domain.Region, error) {
 	query := builder().Insert(tableRegions).
+		Columns("region_name", "district_name").
+		Values(regionName, districtName).
+		Suffix(`on conflict do nothing`)
+
+	_, err := s.pool.Execx(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	selectQuery := builder().Select(strings.Split(regionsColumns, ", ")...).
+		From(tableRegions).
+		Where(squirrel.Eq{"region_name": regionName})
+
+	var selected domain.Region
+	err = s.pool.Getx(ctx, &selected, selectQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	return &selected, nil
+}
+
+func (s *store) insertProvider(ctx context.Context, regionID int64, regionItem *dto.ProviderDto) (*domain.Provider, error) {
+	query := builder().Insert(tableProviders).
 		Columns("id", "region_id", "provider_name").
 		Values(regionItem.ProviderID, regionID, regionItem.ProviderName).
 		Suffix(`on conflict (id) do nothing`)
@@ -59,8 +83,8 @@ func (s *store) insertProvider(ctx context.Context, regionID int64, regionItem *
 	}
 
 	selectQuery := builder().Select(strings.Split(providersColumns, ", ")...).
-		From(tableRegions).
-		Where(squirrel.Eq{"region_name": regionItem.RegionName})
+		From(tableProviders).
+		Where(squirrel.Eq{"provider_name": regionItem.ProviderName})
 
 	var selected domain.Provider
 	err = s.pool.Getx(ctx, &selected, selectQuery)
@@ -117,7 +141,7 @@ func (s *store) insertCategories(
 			return fmt.Errorf("failed to marshal year data: %w", err)
 		}
 
-		query = query.Values(groupedCategoryID, categoryName, yearDataJSON)
+		query = query.Values(groupedCategoryID, categoryName, categoryDto.Unit, yearDataJSON)
 	}
 
 	query = query.Suffix(`

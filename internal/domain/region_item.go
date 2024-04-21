@@ -22,7 +22,7 @@ type Provider struct {
 
 type GroupedCategory struct {
 	ID        int64     `db:"id"`
-	RegionID  int64     `db:"region_id"`
+	RegionID  int64     `db:"provider_id"`
 	Name      string    `db:"name"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`

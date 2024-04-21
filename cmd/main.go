@@ -5,6 +5,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/ougirez/diplom/internal/api"
 	"github.com/ougirez/diplom/internal/pkg/store"
+	"github.com/ougirez/diplom/internal/pkg/store/xpgx"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -36,11 +37,9 @@ func main() {
 	}
 	defer dbPool.Close()
 
-	store := store.NewStore(dbPool)
-
 	// -------------------- Set up service -------------------- //
 
-	svc, err := api.NewAPIService(store)
+	svc, err := api.NewAPIService(store.NewStore(xpgx.NewPool(dbPool)))
 	if err != nil {
 		log.Fatalf("error creating service instance: %s", err)
 	}
