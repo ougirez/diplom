@@ -15,7 +15,7 @@ type Region struct {
 type Provider struct {
 	ID           int64     `db:"id"`
 	RegionID     int64     `db:"region_id"`
-	ProviderName string    `db:"provider_name"`
+	ProviderName string    `db:"name"`
 	CreatedAt    time.Time `db:"created_at"`
 	UpdatedAt    time.Time `db:"updated_at"`
 }
@@ -36,4 +36,10 @@ type Category struct {
 	YearData  map[Year]float64 `db:"year_data"`
 	CreatedAt time.Time        `db:"created_at"`
 	UpdatedAt time.Time        `db:"updated_at"`
+}
+
+type ExtendedCategory struct {
+	Category
+	GroupName    string `db:"group_name"`
+	ProviderName string `db:"provider_name"`
 }

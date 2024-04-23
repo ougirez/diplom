@@ -3,18 +3,16 @@ package api
 import (
 	"context"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/ougirez/diplom/internal/api/controller"
 	"github.com/ougirez/diplom/internal/pkg/logger"
 	"github.com/ougirez/diplom/internal/pkg/store"
-	"github.com/ougirez/diplom/internal/service/provider"
-
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/ougirez/diplom/internal/service/providers"
 )
 
 type APIService struct {
-	router  *echo.Echo
-	store   store.Store
-	service *provider.Service
+	router           *echo.Echo
+	providersService *providers.Service
 }
 
 func (svc *APIService) Serve(addr string) {
@@ -26,20 +24,29 @@ func (svc *APIService) Shutdown(ctx context.Context) error {
 }
 
 func NewAPIService(store store.Store) (*APIService, error) {
-	svc := &APIService{router: echo.New(), store: store}
+	svc := &APIService{router: echo.New()}
 
 	svc.router.Validator = NewValidator()
 	svc.router.Binder = NewBinder()
 	svc.router.Use(middleware.Logger())
 	svc.router.HTTPErrorHandler = httpErrorHandler
+	svc.router.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},                    // Разрешить запросы только от этого домена
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE}, // Разрешить эти HTTP-методы
+		AllowHeaders: []string{"Content-Type", "Authorization"},            // Разрешить эти заголовки
+	}))
 
-	svc.service = provider.NewProviderItemService(store)
+	svc.providersService = providers.NewProvidersService(store)
 
 	api := svc.router.Group("/api/v1")
-	controller := controller.NewController(store, svc.service)
+	cntrl := controller.NewController(svc.providersService)
 
-	fgbu := api.Group("/fgbu")
-	fgbu.POST("/backfill", controller.BackFillFGBUData)
+	fgbu := api.Group("/providers")
+	fgbu.POST("/fgbu/backfill", cntrl.BackFillFGBUData)
+
+	regions := api.Group("/regions")
+	regions.GET("/list", cntrl.GetProvidersRegions)
+	regions.GET("/:id/categories", cntrl.GetCategoriesByRegionID)
 
 	//auth := api.Group("/auth")
 	//auth.POST("/signup", controller.SignupUser)

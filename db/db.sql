@@ -13,11 +13,12 @@ CREATE UNLOGGED TABLE IF NOT EXISTS providers
 (
     id            bigint PRIMARY KEY,
     region_id     bigint,
-    provider_name text UNIQUE,
+    name text UNIQUE,
     created_at    timestamptz not null default now(),
     updated_at    timestamptz not null default now(),
 
-    UNIQUE (provider_name)
+    UNIQUE (name),
+    foreign key (region_id) references regions (id)
 );
 
 CREATE UNLOGGED TABLE IF NOT EXISTS grouped_categories
@@ -28,7 +29,8 @@ CREATE UNLOGGED TABLE IF NOT EXISTS grouped_categories
     created_at  timestamptz not null default now(),
     updated_at  timestamptz not null default now(),
 
-    UNIQUE (provider_id, name)
+    UNIQUE (provider_id, name),
+    foreign key (provider_id) references providers (id)
 );
 
 CREATE UNLOGGED TABLE IF NOT EXISTS categories
@@ -41,5 +43,6 @@ CREATE UNLOGGED TABLE IF NOT EXISTS categories
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now(),
 
-    UNIQUE (group_id, name)
+    UNIQUE (group_id, name),
+    foreign key (group_id) references grouped_categories (id)
 );

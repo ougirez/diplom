@@ -1,4 +1,4 @@
-package provider
+package providers
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/ougirez/diplom/internal/domain"
 	"github.com/ougirez/diplom/internal/domain/dto"
+	"github.com/ougirez/diplom/internal/pkg/logger"
 	"github.com/ougirez/diplom/internal/pkg/store"
 	"github.com/shopspring/decimal"
 	"golang.org/x/sync/errgroup"
@@ -22,8 +23,8 @@ type Service struct {
 	store store.Store
 }
 
-func NewProviderItemService(regionItemDAO store.Store) *Service {
-	return &Service{store: regionItemDAO}
+func NewProvidersService(store store.Store) *Service {
+	return &Service{store: store}
 }
 
 func (s *Service) ParseAndSaveProviderItems(ctx context.Context, mainURL string) ([]*domain.Provider, error) {
@@ -54,19 +55,17 @@ func (s *Service) ParseAndSaveProviderItems(ctx context.Context, mainURL string)
 		districtName := table.Find("caption.fgbu-h2").Text()
 
 		table.Find("tbody tr").EachWithBreak(func(i int, tr *goquery.Selection) bool {
-			regionName := tr.Find("th").Text()
-			providerInfo := tr.Find("td a")
-
-			providerHref, ok := providerInfo.Attr("href")
-			if !ok {
-				err = fmt.Errorf("couldn't find href for provider %s", regionName)
-				return false
-			}
-
-			id := strings.Split(providerHref, "/")[len(strings.Split(providerHref, "/"))-1]
-			providerName := providerInfo.Text()
-
 			eg.Go(func() error {
+				regionName := tr.Find("th").Text()
+				providerInfo := tr.Find("td a")
+
+				providerHref, ok := providerInfo.Attr("href")
+				if !ok {
+					return fmt.Errorf("couldn't find href for providers %s", regionName)
+				}
+
+				id := strings.Split(providerHref, "/")[len(strings.Split(providerHref, "/"))-1]
+				providerName := providerInfo.Text()
 				providerDto, err := s.parseProviderItem(egCtx, fmt.Sprintf("%s/%s", mainURL, id))
 				if err != nil {
 					return fmt.Errorf("parseProviderItem, id-%s: %w", id, err)
@@ -82,15 +81,13 @@ func (s *Service) ParseAndSaveProviderItems(ctx context.Context, mainURL string)
 				providerDto.DistrictName = districtName
 				providerDto.ProviderName = providerName
 
-				egCtx, cancel := context.WithTimeout(egCtx, time.Second)
-				defer cancel()
 				regionItem, err := s.store.Insert(egCtx, providerDto)
 				if err != nil {
 					log.Println(ctx, "store.Insert, region_name-%s: %w", regionName, err)
 					return fmt.Errorf("store.Insert, region_name-%s: %w", regionName, err)
 				}
 
-				log.Printf("parsed info for %s\n", regionName)
+				logger.Warnf(ctx, "parsed info for %s", regionName)
 
 				providerDtosMx.Lock()
 				defer providerDtosMx.Unlock()
@@ -100,15 +97,8 @@ func (s *Service) ParseAndSaveProviderItems(ctx context.Context, mainURL string)
 
 			return true
 		})
-		if err != nil {
-			return false
-		}
-
 		return true
 	})
-	if err != nil {
-		return nil, err
-	}
 
 	err = eg.Wait()
 	if err != nil {
@@ -122,7 +112,7 @@ func (s *Service) parseProviderItem(ctx context.Context, providerURL string) (*d
 	// Отправляем GET запрос
 	resp, err := http.Get(providerURL)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get provider doc: %w", err)
+		return nil, fmt.Errorf("failed to get providers doc: %w", err)
 	}
 	defer func() {
 		err = resp.Body.Close()
@@ -190,11 +180,13 @@ func parseProviderPage(ctx context.Context, doc *goquery.Document) (*dto.Provide
 					yearStr := a.Text()
 					year, err := strconv.Atoi(yearStr)
 					if err != nil {
+						logger.Errorf(ctx, "Atoi: %s", err.Error())
 						return fmt.Errorf("failed to parse year: %w", err)
 					}
 
 					err = fillIrrigationIndicators(egCtx, providerDto, "https://inform-raduga.ru"+href, year)
 					if err != nil {
+						logger.Errorf(ctx, "fillIrrigationIndicators: %s", err.Error())
 						return fmt.Errorf("fillIrrigationIndicators: %w", err)
 					}
 
@@ -389,6 +381,7 @@ func fillIrrigationIndicators(ctx context.Context, providerDto *dto.ProviderDto,
 		groupCategory := providerDto.GetGroupCategory(groupCategoryNames[index-1])
 
 		categoryName := strings.TrimSpace(ths.Eq(1).Text())
+		unit := strings.ReplaceAll(strings.TrimSpace(ths.Eq(2).Text()), "\u00a0", " ")
 
 		valStr := strings.ReplaceAll(strings.TrimSpace(tr.Find("td").Text()), ",", ".")
 		if strings.HasPrefix(categoryName, "...") {
@@ -406,7 +399,7 @@ func fillIrrigationIndicators(ctx context.Context, providerDto *dto.ProviderDto,
 		}
 
 		category := groupCategory.GetCategory(categoryName)
-		putErr := category.PutData(year, val, "тыс. га")
+		putErr := category.PutData(year, val, unit)
 		if putErr != nil {
 			err = fmt.Errorf("category.PutData, year-%d, val-%f: %w", year, val, err)
 			return false
@@ -480,3 +473,29 @@ func fillIrrigationIndicators(ctx context.Context, providerDto *dto.ProviderDto,
 //		}
 //	})
 //}
+
+func (s *Service) ListProvidersRegions(ctx context.Context) ([]*domain.Region, error) {
+	regionItem, err := s.store.ListProvidersRegions(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("store.ListProvidersRegions: %w", err)
+	}
+
+	return regionItem, nil
+}
+
+func (s *Service) ListCategoriesByRegionID(ctx context.Context, regionID int64) (map[string]map[string][]*domain.Category, error) {
+	extendedCategories, err := s.store.ListCategoriesByRegionID(ctx, regionID)
+	if err != nil {
+		return nil, fmt.Errorf("store.ListCategoriesByRegionID: %w", err)
+	}
+
+	res := make(map[string]map[string][]*domain.Category)
+	for _, c := range extendedCategories {
+		if _, ok := res[c.ProviderName]; !ok {
+			res[c.ProviderName] = make(map[string][]*domain.Category)
+		}
+		res[c.ProviderName][c.GroupName] = append(res[c.ProviderName][c.GroupName], &c.Category)
+	}
+
+	return res, nil
+}

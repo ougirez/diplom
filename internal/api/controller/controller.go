@@ -1,15 +1,13 @@
 package controller
 
 import (
-	"github.com/ougirez/diplom/internal/pkg/store"
-	regionService "github.com/ougirez/diplom/internal/service/provider"
+	regionService "github.com/ougirez/diplom/internal/service/providers"
 )
 
 type Controller struct {
-	store   store.Store
 	service *regionService.Service
 }
 
-func NewController(store store.Store, service *regionService.Service) *Controller {
-	return &Controller{store: store, service: service}
+func NewController(service *regionService.Service) *Controller {
+	return &Controller{service: service}
 }
