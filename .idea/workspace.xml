@@ -4,16 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b79ef8c8-3ce0-4bd3-ad43-7c9b78feadbb" name="Changes" comment="split by regions and providers">
+    <list default="true" id="b79ef8c8-3ce0-4bd3-ad43-7c9b78feadbb" name="Changes" comment="categories api + fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/db.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/api/api.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/api.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/controller/controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/controller/controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/controller/region_items.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/controller/regions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/region_item.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/domain/region_item.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/api/controller/regions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/controller/regions.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/pkg/store/provider.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/pkg/store/provider.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/service/provider/list_region_names.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/service/provider/provider_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/service/providers/providers_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/service/providers/providers_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/service/providers/providers_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,7 +140,8 @@
     <MESSAGE value="http, postgres" />
     <MESSAGE value="fill providers handler" />
     <MESSAGE value="split by regions and providers" />
-    <option name="LAST_COMMIT_MESSAGE" value="split by regions and providers" />
+    <MESSAGE value="categories api + fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="categories api + fixes" />
   </component>
   <component name="VgoProject">
     <environment>

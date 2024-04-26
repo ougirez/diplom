@@ -10,10 +10,16 @@ import (
 	"github.com/ougirez/diplom/internal/pkg/logger"
 )
 
+type ListCategoriesByRegionIDOpts struct {
+	RegionID          int
+	CategoryName      *string
+	GroupCategoryName *string
+}
+
 type ProviderStore interface {
 	Insert(ctx context.Context, regionItem *dto.ProviderDto) (*domain.Provider, error)
-	ListProvidersRegions(ctx context.Context) ([]*domain.Region, error)
-	ListCategoriesByRegionID(ctx context.Context, regionID int64) ([]*domain.ExtendedCategory, error)
+	ListRegions(ctx context.Context) ([]*domain.Region, error)
+	ListCategoriesByRegionID(ctx context.Context, opts ListCategoriesByRegionIDOpts) ([]*domain.ExtendedCategory, error)
 }
 
 var (
@@ -165,7 +171,7 @@ set
 	return nil
 }
 
-func (s *store) ListProvidersRegions(ctx context.Context) ([]*domain.Region, error) {
+func (s *store) ListRegions(ctx context.Context) ([]*domain.Region, error) {
 	query := builder().Select(regionsColumns...).
 		From(tableRegions).
 		OrderBy("district_name, region_name")
@@ -182,7 +188,7 @@ func (s *store) ListProvidersRegions(ctx context.Context) ([]*domain.Region, err
 
 func (s *store) ListCategoriesByRegionID(
 	ctx context.Context,
-	regionID int64,
+	opts ListCategoriesByRegionIDOpts,
 ) ([]*domain.ExtendedCategory, error) {
 	query := builder().Select(
 		`c.*, gc.name as group_name, p.name as provider_name`).
@@ -190,7 +196,15 @@ func (s *store) ListCategoriesByRegionID(
 		Join("categories c on gc.id=c.group_id").
 		Join("providers p on p.id=gc.provider_id").
 		Join("regions r on r.id=p.region_id").
-		Where(sq.Eq{"r.id": regionID})
+		Where(sq.Eq{"r.id": opts.RegionID})
+
+	if opts.CategoryName != nil {
+		query = query.Where(sq.Eq{"c.name": *opts.CategoryName})
+	}
+
+	if opts.GroupCategoryName != nil {
+		query = query.Where(sq.Eq{"gc.name": *opts.GroupCategoryName})
+	}
 
 	var selected []*domain.ExtendedCategory
 

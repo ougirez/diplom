@@ -474,17 +474,17 @@ func fillIrrigationIndicators(ctx context.Context, providerDto *dto.ProviderDto,
 //	})
 //}
 
-func (s *Service) ListProvidersRegions(ctx context.Context) ([]*domain.Region, error) {
-	regionItem, err := s.store.ListProvidersRegions(ctx)
+func (s *Service) ListRegions(ctx context.Context) ([]*domain.Region, error) {
+	regionItem, err := s.store.ListRegions(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("store.ListProvidersRegions: %w", err)
+		return nil, fmt.Errorf("store.ListRegions: %w", err)
 	}
 
 	return regionItem, nil
 }
 
-func (s *Service) ListCategoriesByRegionID(ctx context.Context, regionID int64) (map[string]map[string][]*domain.Category, error) {
-	extendedCategories, err := s.store.ListCategoriesByRegionID(ctx, regionID)
+func (s *Service) ListCategoriesByRegionID(ctx context.Context, opts store.ListCategoriesByRegionIDOpts) (map[string]map[string][]*domain.Category, error) {
+	extendedCategories, err := s.store.ListCategoriesByRegionID(ctx, opts)
 	if err != nil {
 		return nil, fmt.Errorf("store.ListCategoriesByRegionID: %w", err)
 	}

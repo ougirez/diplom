@@ -45,7 +45,7 @@ func NewAPIService(store store.Store) (*APIService, error) {
 	fgbu.POST("/fgbu/backfill", cntrl.BackFillFGBUData)
 
 	regions := api.Group("/regions")
-	regions.GET("/list", cntrl.GetProvidersRegions)
+	regions.GET("/list", cntrl.GetRegions)
 	regions.GET("/:id/categories", cntrl.GetCategoriesByRegionID)
 
 	//auth := api.Group("/auth")
