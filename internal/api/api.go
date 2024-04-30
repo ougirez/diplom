@@ -46,42 +46,8 @@ func NewAPIService(store store.Store) (*APIService, error) {
 
 	regions := api.Group("/regions")
 	regions.GET("/list", cntrl.GetRegions)
+	regions.GET("/category", cntrl.GetCategoryDataByRegions)
 	regions.GET("/:id/categories", cntrl.GetCategoriesByRegionID)
-
-	//auth := api.Group("/auth")
-	//auth.POST("/signup", controller.SignupUser)
-	//auth.POST("/login", controller.LoginUser)
-	//auth.DELETE("/logout", controller.LogoutUser)
-	//
-	//user := api.Group("/user", svc.AuthMiddleware)
-	//user.GET("/get", controller.GetUser)
-	//
-	//account := api.Group("/accounts", svc.AuthMiddleware)
-	//
-	//account.POST("/create", controller.CreateAccount)
-	//account.GET("/list", controller.ListUserAccounts)
-	//account.POST("/refill", controller.RefillAccount)
-	//account.POST("/withdraw", controller.WithdrawFromAccount)
-	//account.POST("/buy", controller.MakePurchase)
-	//account.POST("/sell", controller.MakeSale)
-	//
-	//oauth := api.Group("/oauth")
-	//oauth.GET("/telegram/:user_id", controller.OAuthTelegram, svc.OAuthTelegramMiddleware)
-	//
-	//admin := api.Group("/admin")
-	//admin.POST("/login", controller.LoginAdmin)
-	//admin.POST("/update_user_status", controller.UpdateUserStatus, svc.AdminMiddleware)
-	//admin.POST("/list_users", controller.ListUsers, svc.AdminMiddleware)
-	//
-	//currencies := api.Group("/currencies", svc.AuthMiddleware)
-	//currencies.GET("/list", controller.ListCurrencies)
-	//currencies.GET("/data", controller.GetCurrencyData)
-	//
-	//operations := api.Group("/operations", svc.AuthMiddleware)
-	//operations.POST("/list", controller.ListOperations)
-	//
-	//funtik := api.Group("/funtik", svc.AuthMiddleware)
-	//funtik.POST("/subscribe", controller.SubscribeToFuntik)
 
 	return svc, nil
 }

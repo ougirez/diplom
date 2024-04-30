@@ -1,8 +1,9 @@
 CREATE UNLOGGED TABLE IF NOT EXISTS regions
 (
     id            BIGSERIAL PRIMARY KEY,
-    region_name   text UNIQUE,
-    district_name text,
+    region_name   text UNIQUE not null,
+    district_name text        not null,
+    square_km     bigint      not null,
     created_at    timestamptz not null default now(),
     updated_at    timestamptz not null default now(),
 
@@ -11,11 +12,11 @@ CREATE UNLOGGED TABLE IF NOT EXISTS regions
 
 CREATE UNLOGGED TABLE IF NOT EXISTS providers
 (
-    id            bigint PRIMARY KEY,
-    region_id     bigint,
-    name text UNIQUE,
-    created_at    timestamptz not null default now(),
-    updated_at    timestamptz not null default now(),
+    id         bigint PRIMARY KEY,
+    region_id  bigint,
+    name       text UNIQUE,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now(),
 
     UNIQUE (name),
     foreign key (region_id) references regions (id)

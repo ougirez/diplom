@@ -9,6 +9,7 @@ import (
 	"github.com/ougirez/diplom/internal/domain/dto"
 	"github.com/ougirez/diplom/internal/pkg/logger"
 	"github.com/ougirez/diplom/internal/pkg/store"
+	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 	"golang.org/x/sync/errgroup"
 	"log"
@@ -475,12 +476,12 @@ func fillIrrigationIndicators(ctx context.Context, providerDto *dto.ProviderDto,
 //}
 
 func (s *Service) ListRegions(ctx context.Context) ([]*domain.Region, error) {
-	regionItem, err := s.store.ListRegions(ctx)
+	regionItems, err := s.store.ListRegions(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("store.ListRegions: %w", err)
 	}
 
-	return regionItem, nil
+	return regionItems, nil
 }
 
 func (s *Service) ListCategoriesByRegionID(ctx context.Context, opts store.ListCategoriesByRegionIDOpts) (map[string]map[string][]*domain.Category, error) {
@@ -498,4 +499,30 @@ func (s *Service) ListCategoriesByRegionID(ctx context.Context, opts store.ListC
 	}
 
 	return res, nil
+}
+
+func (s *Service) GetCategoryDataByRegions(ctx context.Context, opts store.GetCategoryDataByRegionsOpts) (map[string]domain.YearData, domain.Year, domain.Year, error) {
+	regionsData, err := s.store.GetCategoryDataByRegions(ctx, opts)
+	if err != nil {
+		return nil, 0, 0, fmt.Errorf("store.GetCategoryDataByRegions: %w", err)
+	}
+
+	res := make(map[string]domain.YearData)
+	var minYear, maxYear domain.Year
+	for _, r := range regionsData {
+		res[r.RegionName] = r.YearData
+
+		keys := lo.Keys(r.YearData)
+		minY := lo.Min(keys)
+		maxY := lo.Max(keys)
+
+		if minYear == 0 || minY < minYear {
+			minYear = minY
+		}
+		if maxYear == 0 || maxY > maxYear {
+			maxYear = maxY
+		}
+	}
+
+	return res, minYear, maxYear, nil
 }

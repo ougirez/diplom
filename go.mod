@@ -14,6 +14,7 @@ require (
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/labstack/gommon v0.4.2
+	github.com/samber/lo v1.39.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/viper v1.18.2
 	go.uber.org/zap v1.27.0
