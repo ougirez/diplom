@@ -28,9 +28,19 @@ func NewProvidersService(store store.Store) *Service {
 	return &Service{store: store}
 }
 
-func (s *Service) ParseAndSaveProviderItems(ctx context.Context, mainURL string) ([]*domain.Provider, error) {
-	// Отправляем GET запрос
-	resp, err := http.Get(mainURL)
+func (s *Service) ParseAndSaveProviderItems(
+	ctx context.Context,
+	mainURL string,
+) ([]*domain.Provider, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "https://inform-raduga.ru/fgbu", nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	req.Header.Set("User-Agent", " ")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get main page: %w", err)
 	}
@@ -38,12 +48,11 @@ func (s *Service) ParseAndSaveProviderItems(ctx context.Context, mainURL string)
 		err = resp.Body.Close()
 	}()
 
-	// Проверяем статус ответа, он должен быть 200 OK
 	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("status code error: %d %s", resp.StatusCode, resp.Status)
+		logger.Error(ctx, resp.Body)
+		return nil, fmt.Errorf("status code error: %d %s", resp.StatusCode, resp.Status)
 	}
 
-	// Используем goquery для парсинга страницы
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("goquery.NewDocumentFromReader: %w", err)
@@ -52,54 +61,55 @@ func (s *Service) ParseAndSaveProviderItems(ctx context.Context, mainURL string)
 	providerDtos := make([]*domain.Provider, 0, 100)
 	providerDtosMx := sync.Mutex{}
 	eg, egCtx := errgroup.WithContext(ctx)
-	doc.Find("div#block-mcxdm-mcxdm-system-main article table").EachWithBreak(func(i int, table *goquery.Selection) bool {
-		districtName := table.Find("caption.fgbu-h2").Text()
+	doc.Find("div#block-mcxdm-mcxdm-system-main article table").
+		EachWithBreak(func(i int, table *goquery.Selection) bool {
+			districtName := table.Find("caption.fgbu-h2").Text()
 
-		table.Find("tbody tr").EachWithBreak(func(i int, tr *goquery.Selection) bool {
-			eg.Go(func() error {
-				regionName := tr.Find("th").Text()
-				providerInfo := tr.Find("td a")
+			table.Find("tbody tr").EachWithBreak(func(i int, tr *goquery.Selection) bool {
+				eg.Go(func() error {
+					regionName := tr.Find("th").Text()
+					providerInfo := tr.Find("td a")
 
-				providerHref, ok := providerInfo.Attr("href")
-				if !ok {
-					return fmt.Errorf("couldn't find href for providers %s", regionName)
-				}
+					providerHref, ok := providerInfo.Attr("href")
+					if !ok {
+						return fmt.Errorf("couldn't find href for providers %s", regionName)
+					}
 
-				id := strings.Split(providerHref, "/")[len(strings.Split(providerHref, "/"))-1]
-				providerName := providerInfo.Text()
-				providerDto, err := s.parseProviderItem(egCtx, fmt.Sprintf("%s/%s", mainURL, id))
-				if err != nil {
-					return fmt.Errorf("parseProviderItem, id-%s: %w", id, err)
-				}
+					id := strings.Split(providerHref, "/")[len(strings.Split(providerHref, "/"))-1]
+					providerName := providerInfo.Text()
+					providerDto, err := s.parseProviderItem(egCtx, fmt.Sprintf("%s/%s", mainURL, id))
+					if err != nil {
+						return fmt.Errorf("parseProviderItem, id-%s: %w", id, err)
+					}
 
-				idInt, err := strconv.Atoi(id)
-				if err != nil {
-					return fmt.Errorf("failed to parse id: %w", err)
-				}
+					idInt, err := strconv.Atoi(id)
+					if err != nil {
+						return fmt.Errorf("failed to parse id: %w", err)
+					}
 
-				providerDto.ProviderID = int64(idInt)
-				providerDto.RegionName = regionName
-				providerDto.DistrictName = districtName
-				providerDto.ProviderName = providerName
+					providerDto.ProviderID = int64(idInt)
+					providerDto.RegionName = regionName
+					providerDto.DistrictName = districtName
+					providerDto.ProviderName = providerName
 
-				regionItem, err := s.store.Insert(egCtx, providerDto)
-				if err != nil {
-					log.Println(ctx, "store.Insert, region_name-%s: %w", regionName, err)
-					return fmt.Errorf("store.Insert, region_name-%s: %w", regionName, err)
-				}
+					regionItem, err := s.store.Insert(egCtx, providerDto)
+					if err != nil {
+						log.Println(ctx, "store.Insert, region_name-%s: %w", regionName, err)
+						return fmt.Errorf("store.Insert, region_name-%s: %w", regionName, err)
+					}
 
-				logger.Warnf(ctx, "parsed info for %s", regionName)
+					logger.Warnf(ctx, "parsed info for %s", regionName)
 
-				providerDtosMx.Lock()
-				defer providerDtosMx.Unlock()
-				providerDtos = append(providerDtos, regionItem)
-				return nil
+					providerDtosMx.Lock()
+					defer providerDtosMx.Unlock()
+					providerDtos = append(providerDtos, regionItem)
+					return nil
+				})
+
+				return true
 			})
-
 			return true
 		})
-		return true
-	})
 
 	err = eg.Wait()
 	if err != nil {
@@ -110,8 +120,15 @@ func (s *Service) ParseAndSaveProviderItems(ctx context.Context, mainURL string)
 }
 
 func (s *Service) parseProviderItem(ctx context.Context, providerURL string) (*dto.ProviderDto, error) {
-	// Отправляем GET запрос
-	resp, err := http.Get(providerURL)
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "https://inform-raduga.ru/fgbu", nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	req.Header.Set("User-Agent", " ")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get providers doc: %w", err)
 	}
@@ -119,12 +136,10 @@ func (s *Service) parseProviderItem(ctx context.Context, providerURL string) (*d
 		err = resp.Body.Close()
 	}()
 
-	// Проверяем статус ответа, он должен быть 200 OK
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("status code error: %d %s", resp.StatusCode, resp.Status)
 	}
 
-	// Используем goquery для парсинга страницы
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("goquery.NewDocumentFromReader: %w", err)
@@ -139,7 +154,6 @@ func (s *Service) parseProviderItem(ctx context.Context, providerURL string) (*d
 }
 
 func parseProviderPage(ctx context.Context, doc *goquery.Document) (*dto.ProviderDto, error) {
-	// Extract data by year
 	providerDto := new(dto.ProviderDto)
 	providerDto.GroupedCategories = make(map[string]*dto.GroupedCategory)
 
@@ -196,23 +210,6 @@ func parseProviderPage(ctx context.Context, doc *goquery.Document) (*dto.Provide
 
 				return true
 			})
-		} else if i == 3 {
-			//selection.Find("a").Each(func(i int, a *goquery.Selection) {
-			//	wg.Add(1)
-			//
-			//	href, ok := a.Attr("href")
-			//	if !ok {
-			//		return
-			//	}
-			//
-			//	yearStr := a.Text()
-			//	year, err := strconv.Atoi(yearStr)
-			//	if err != nil {
-			//		panic(err)
-			//	}
-			//
-			//	go fillHistoryData(providerDto, &wg, "https://inform-raduga.ru"+href, year)
-			//})
 		}
 
 		return true
@@ -239,7 +236,6 @@ func fillMainTableDataForYear(li *goquery.Selection, providerDto *dto.ProviderDt
 	var err error
 	// пробегаемся по строкам
 	li.Find("tr").EachWithBreak(func(_ int, tr *goquery.Selection) bool {
-		// The first th in the table is the category of this table
 		groupCategoryName := tr.Find("th[scope=rowgroup]").Text()
 		if groupCategoryName == "" || strings.Contains(groupCategoryName, "Итого") {
 			// скипаем
@@ -334,7 +330,6 @@ func fillIrrigationIndicators(ctx context.Context, providerDto *dto.ProviderDto,
 			if httpErr != nil {
 				return fmt.Errorf("http.Get: %w", httpErr)
 			}
-			// Проверяем статус ответа, он должен быть 200 OK
 			if resp.StatusCode != http.StatusOK {
 				return fmt.Errorf("status code error: %d %s; %s", resp.StatusCode, resp.Status)
 			}
@@ -357,7 +352,6 @@ func fillIrrigationIndicators(ctx context.Context, providerDto *dto.ProviderDto,
 		}
 	}()
 
-	// Используем goquery для парсинга страницы
 	doc, parseErr := goquery.NewDocumentFromReader(resp.Body)
 	if parseErr != nil {
 		return fmt.Errorf("goquery.NewDocumentFromReader: %w", parseErr)
@@ -412,69 +406,6 @@ func fillIrrigationIndicators(ctx context.Context, providerDto *dto.ProviderDto,
 	return
 }
 
-//func fillHistoryData(regionItem *domain.Provider, wg *sync.WaitGroup, url string, year domain.Year) {
-//	defer wg.Done()
-//
-//	resp, err := http.Get(url)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	defer resp.Body.Close()
-//
-//	// Проверяем статус ответа, он должен быть 200 OK
-//	if resp.StatusCode != http.StatusOK {
-//		log.Fatalf("status code error: %d %s", resp.StatusCode, resp.Status)
-//	}
-//
-//	// Используем goquery для парсинга страницы
-//	doc, err := goquery.NewDocumentFromReader(resp.Body)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//
-//	groupCategory, ok := regionItem.GroupedCategories["Исторические показатели"]
-//	if !ok {
-//		groupCategory = &domain.GroupedCategory{Categories: make(map[string]*domain.Category)}
-//		regionItem.GroupedCategories["Исторические показатели"] = groupCategory
-//	}
-//
-//	doc.Find("table.fgbu-passport tbody tr").Each(func(i int, tr *goquery.Selection) {
-//		categoryName := strings.TrimSpace(tr.Find("th").First().Text())
-//
-//		var unit string
-//		if categoryName == "Годовой объем забираемой воды из различных водных объектов для орошения (водопотребление), млн. м3" {
-//			unit = "млн. м3"
-//			categoryName = strings.ReplaceAll(categoryName, ", млн. м3", "")
-//		} else if i >= 23 {
-//			unit = "тыс. га"
-//			categoryName = strings.ReplaceAll(categoryName, ", тыс. га", "")
-//		}
-//
-//		category, ok := groupCategory.Categories[categoryName]
-//		if !ok {
-//			category = &domain.Category{
-//				YearData: make(map[domain.Year]float64),
-//				Unit:     unit,
-//			}
-//			groupCategory.Categories[categoryName] = category
-//		}
-//
-//		valStr := strings.ReplaceAll(strings.TrimSpace(tr.Find("td").First().Text()), ",", ".")
-//		if valStr == "" {
-//			valStr = "0"
-//		}
-//
-//		val, err := strconv.ParseFloat(valStr, 64)
-//		if err != nil {
-//			return
-//		}
-//
-//		if _, ok := category.YearData[year]; !ok {
-//			category.YearData[year] = val
-//		}
-//	})
-//}
-
 func (s *Service) ListRegions(ctx context.Context) ([]*domain.Region, error) {
 	regionItems, err := s.store.ListRegions(ctx)
 	if err != nil {
@@ -502,10 +433,12 @@ func (s *Service) ListCategoriesByRegionID(ctx context.Context, opts store.ListC
 }
 
 type GetCategoryDataByRegionsResponse struct {
-	Unit        string                     `json:"unit"`
-	RegionsData map[string]domain.YearData `json:"regions_data,omitempty"`
-	MinYear     domain.Year                `json:"min_year,omitempty"`
-	MaxYear     domain.Year                `json:"max_year,omitempty"`
+	CategoryName      string                     `json:"category_name"`
+	GroupCategoryName string                     `json:"group_category_name"`
+	Unit              string                     `json:"unit"`
+	RegionsData       map[string]domain.YearData `json:"regions_data,omitempty"`
+	MinYear           domain.Year                `json:"min_year,omitempty"`
+	MaxYear           domain.Year                `json:"max_year,omitempty"`
 }
 
 func (s *Service) GetCategoryDataByRegions(ctx context.Context, opts store.GetCategoryDataByRegionsOpts) (*GetCategoryDataByRegionsResponse, error) {
@@ -515,7 +448,9 @@ func (s *Service) GetCategoryDataByRegions(ctx context.Context, opts store.GetCa
 	}
 
 	resp := &GetCategoryDataByRegionsResponse{
-		RegionsData: make(map[string]domain.YearData),
+		RegionsData:       make(map[string]domain.YearData),
+		CategoryName:      opts.CategoryName,
+		GroupCategoryName: opts.GroupCategoryName,
 	}
 	for _, r := range regionsData {
 		resp.RegionsData[r.RegionName] = r.YearData

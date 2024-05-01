@@ -31,9 +31,9 @@ func NewAPIService(store store.Store) (*APIService, error) {
 	svc.router.Use(middleware.Logger())
 	svc.router.HTTPErrorHandler = httpErrorHandler
 	svc.router.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000"},                    // Разрешить запросы только от этого домена
-		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE}, // Разрешить эти HTTP-методы
-		AllowHeaders: []string{"Content-Type", "Authorization"},            // Разрешить эти заголовки
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+		AllowHeaders: []string{"Content-Type", "Authorization"},
 	}))
 
 	svc.providersService = service.NewProvidersService(store)

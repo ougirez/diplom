@@ -4,18 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/georgysavva/scany/v2/dbscan"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
-
-// AllowUnknownColumns позволяет сканировать строки в структуры,
-// в которых отсутствует часть колонок из строк.
-func AllowUnknownColumns() {
-	dbscan.WithAllowUnknownColumns(true)(dbscan.DefaultAPI)
-	pgxscan.DefaultAPI, _ = pgxscan.NewAPI(dbscan.DefaultAPI)
-}
 
 // BasicExecutor - интерфейс с базовыми методами, на которых строятся операции интерфейса Executor.
 type BasicExecutor interface {

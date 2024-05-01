@@ -37,9 +37,11 @@ func main() {
 	}
 	defer dbPool.Close()
 
+	s := store.NewStore(xpgx.NewPool(dbPool))
+
 	// -------------------- Set up service -------------------- //
 
-	svc, err := api.NewAPIService(store.NewStore(xpgx.NewPool(dbPool)))
+	svc, err := api.NewAPIService(s)
 	if err != nil {
 		log.Fatalf("error creating service instance: %s", err)
 	}

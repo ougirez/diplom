@@ -47,3 +47,6 @@ CREATE UNLOGGED TABLE IF NOT EXISTS categories
     UNIQUE (group_id, name),
     foreign key (group_id) references grouped_categories (id)
 );
+
+
+
