@@ -502,10 +502,12 @@ func (s *Service) ListCategoriesByRegionID(ctx context.Context, opts store.ListC
 }
 
 type GetCategoryDataByRegionsResponse struct {
-	Unit        string                     `json:"unit"`
-	RegionsData map[string]domain.YearData `json:"regions_data,omitempty"`
-	MinYear     domain.Year                `json:"min_year,omitempty"`
-	MaxYear     domain.Year                `json:"max_year,omitempty"`
+	CategoryName      string                     `json:"category_name"`
+	GroupCategoryName string                     `json:"group_category_name"`
+	Unit              string                     `json:"unit"`
+	RegionsData       map[string]domain.YearData `json:"regions_data,omitempty"`
+	MinYear           domain.Year                `json:"min_year,omitempty"`
+	MaxYear           domain.Year                `json:"max_year,omitempty"`
 }
 
 func (s *Service) GetCategoryDataByRegions(ctx context.Context, opts store.GetCategoryDataByRegionsOpts) (*GetCategoryDataByRegionsResponse, error) {
@@ -515,7 +517,9 @@ func (s *Service) GetCategoryDataByRegions(ctx context.Context, opts store.GetCa
 	}
 
 	resp := &GetCategoryDataByRegionsResponse{
-		RegionsData: make(map[string]domain.YearData),
+		RegionsData:       make(map[string]domain.YearData),
+		CategoryName:      opts.CategoryName,
+		GroupCategoryName: opts.GroupCategoryName,
 	}
 	for _, r := range regionsData {
 		resp.RegionsData[r.RegionName] = r.YearData

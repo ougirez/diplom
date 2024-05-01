@@ -6,32 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b79ef8c8-3ce0-4bd3-ad43-7c9b78feadbb" name="Changes" comment="map graph">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/api.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/api.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/controller/auth.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/controller/common.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/controller/controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/controller/controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/controller/regions.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/controller/regions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/middleware.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/admin.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/crypto.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/region_item.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/domain/region_item.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/types.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/user.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/constants/context_keys.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/constants/errors.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/pkg/constants/errors.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/constants/jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/pkg/constants/jwt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/constants/requests.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/helpers/helpers.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/store/provider.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/pkg/store/provider.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/store/region.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/store/store.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/pkg/store/store.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/store/user.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/store/xpgx/tx.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/utils/auth_token.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/utils/cookie.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/service/auth/auth_service.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/service/providers/providers_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/service/providers_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/service/user/user_service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/service/providers_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/service/providers_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
