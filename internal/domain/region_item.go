@@ -46,6 +46,7 @@ type ExtendedCategory struct {
 }
 
 type RegionCategoryData struct {
+	Unit                string   `db:"unit"`
 	RegionName          string   `db:"region_name"`
 	GroupedCategoryName string   `db:"grouped_category_name"`
 	CategoryName        string   `db:"category_name"`

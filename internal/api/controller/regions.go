@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"github.com/ougirez/diplom/internal/domain"
 	"github.com/ougirez/diplom/internal/pkg/store"
 	"net/http"
 	"strconv"
@@ -62,18 +61,7 @@ func (c *Controller) GetCategoryDataByRegions(ctx echo.Context) error {
 		GroupCategoryName: groupCategoryName,
 	}
 
-	type response struct {
-		RegionsData map[string]domain.YearData `json:"regions_data,omitempty"`
-		MinYear     domain.Year                `json:"min_year,omitempty"`
-		MaxYear     domain.Year                `json:"max_year,omitempty"`
-	}
-
-	var (
-		resp response
-		err  error
-	)
-
-	resp.RegionsData, resp.MinYear, resp.MaxYear, err = c.service.GetCategoryDataByRegions(ctx.Request().Context(), opts)
+	resp, err := c.service.GetCategoryDataByRegions(ctx.Request().Context(), opts)
 	if err != nil {
 		return err
 	}

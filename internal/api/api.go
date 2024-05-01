@@ -7,12 +7,12 @@ import (
 	"github.com/ougirez/diplom/internal/api/controller"
 	"github.com/ougirez/diplom/internal/pkg/logger"
 	"github.com/ougirez/diplom/internal/pkg/store"
-	"github.com/ougirez/diplom/internal/service/providers"
+	"github.com/ougirez/diplom/internal/service"
 )
 
 type APIService struct {
 	router           *echo.Echo
-	providersService *providers.Service
+	providersService *service.Service
 }
 
 func (svc *APIService) Serve(addr string) {
@@ -36,7 +36,7 @@ func NewAPIService(store store.Store) (*APIService, error) {
 		AllowHeaders: []string{"Content-Type", "Authorization"},            // Разрешить эти заголовки
 	}))
 
-	svc.providersService = providers.NewProvidersService(store)
+	svc.providersService = service.NewProvidersService(store)
 
 	api := svc.router.Group("/api/v1")
 	cntrl := controller.NewController(svc.providersService)

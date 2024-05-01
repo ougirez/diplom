@@ -24,10 +24,6 @@ func NewCodedError(msg string, code int) *CodedError {
 }
 
 var (
-	// Unathorized
-	ErrUnauthorized      = &CodedError{errors.New("unauthorized"), http.StatusUnauthorized}
-	ErrMissingAuthCookie = &CodedError{errors.New("missing authorization cookie"), http.StatusUnauthorized}
-
 	ErrPasswordMismatch = &CodedError{errors.New("password mismatch"), http.StatusUnauthorized}
 
 	ErrAuthTokenInvalid        = &CodedError{errors.New("authorization token is invalid"), http.StatusUnauthorized}

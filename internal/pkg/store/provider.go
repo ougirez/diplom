@@ -21,13 +21,6 @@ type GetCategoryDataByRegionsOpts struct {
 	GroupCategoryName string
 }
 
-type ProviderStore interface {
-	Insert(ctx context.Context, regionItem *dto.ProviderDto) (*domain.Provider, error)
-	ListRegions(ctx context.Context) ([]*domain.Region, error)
-	ListCategoriesByRegionID(ctx context.Context, opts ListCategoriesByRegionIDOpts) ([]*domain.ExtendedCategory, error)
-	GetCategoryDataByRegions(ctx context.Context, opts GetCategoryDataByRegionsOpts) ([]*domain.RegionCategoryData, error)
-}
-
 var (
 	regionsColumns         = []string{"id", "region_name", "district_name", "created_at", "updated_at"}
 	providersColumns       = []string{"id", "region_id", "name", "created_at", "updated_at"}
@@ -227,7 +220,7 @@ func (s *store) GetCategoryDataByRegions(
 	opts GetCategoryDataByRegionsOpts,
 ) ([]*domain.RegionCategoryData, error) {
 	query := builder().Select(
-		`r.region_name, gc.name as grouped_category_name, c.name as category_name, c.year_data`).
+		`r.region_name, gc.name as grouped_category_name, c.name as category_name, c.year_data, c.unit`).
 		From("grouped_categories gc").
 		Join("categories c on gc.id=c.group_id").
 		Join("providers p on p.id=gc.provider_id").

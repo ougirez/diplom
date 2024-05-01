@@ -1,7 +1,7 @@
 package controller
 
 import (
-	regionService "github.com/ougirez/diplom/internal/service/providers"
+	regionService "github.com/ougirez/diplom/internal/service"
 )
 
 type Controller struct {

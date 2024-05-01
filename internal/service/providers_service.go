@@ -1,4 +1,4 @@
-package providers
+package service
 
 import (
 	"context"
@@ -501,28 +501,37 @@ func (s *Service) ListCategoriesByRegionID(ctx context.Context, opts store.ListC
 	return res, nil
 }
 
-func (s *Service) GetCategoryDataByRegions(ctx context.Context, opts store.GetCategoryDataByRegionsOpts) (map[string]domain.YearData, domain.Year, domain.Year, error) {
+type GetCategoryDataByRegionsResponse struct {
+	Unit        string                     `json:"unit"`
+	RegionsData map[string]domain.YearData `json:"regions_data,omitempty"`
+	MinYear     domain.Year                `json:"min_year,omitempty"`
+	MaxYear     domain.Year                `json:"max_year,omitempty"`
+}
+
+func (s *Service) GetCategoryDataByRegions(ctx context.Context, opts store.GetCategoryDataByRegionsOpts) (*GetCategoryDataByRegionsResponse, error) {
 	regionsData, err := s.store.GetCategoryDataByRegions(ctx, opts)
 	if err != nil {
-		return nil, 0, 0, fmt.Errorf("store.GetCategoryDataByRegions: %w", err)
+		return nil, fmt.Errorf("store.GetCategoryDataByRegions: %w", err)
 	}
 
-	res := make(map[string]domain.YearData)
-	var minYear, maxYear domain.Year
+	resp := &GetCategoryDataByRegionsResponse{
+		RegionsData: make(map[string]domain.YearData),
+	}
 	for _, r := range regionsData {
-		res[r.RegionName] = r.YearData
+		resp.RegionsData[r.RegionName] = r.YearData
 
 		keys := lo.Keys(r.YearData)
 		minY := lo.Min(keys)
 		maxY := lo.Max(keys)
 
-		if minYear == 0 || minY < minYear {
-			minYear = minY
+		if resp.MinYear == 0 || minY < resp.MinYear {
+			resp.MinYear = minY
 		}
-		if maxYear == 0 || maxY > maxYear {
-			maxYear = maxY
+		if resp.MaxYear == 0 || maxY > resp.MaxYear {
+			resp.MaxYear = maxY
 		}
+		resp.Unit = r.Unit
 	}
 
-	return res, minYear, maxYear, nil
+	return resp, nil
 }

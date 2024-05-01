@@ -3,15 +3,17 @@ package store
 import (
 	"context"
 	"github.com/ougirez/diplom/internal/domain"
+	"github.com/ougirez/diplom/internal/domain/dto"
 	"github.com/ougirez/diplom/internal/pkg/store/xpgx"
 )
 
-type Tx = xpgx.Tx
 type Pool = xpgx.Pool
 
 type Store interface {
-	UserStore
-	ProviderStore
+	Insert(ctx context.Context, regionItem *dto.ProviderDto) (*domain.Provider, error)
+	ListRegions(ctx context.Context) ([]*domain.Region, error)
+	ListCategoriesByRegionID(ctx context.Context, opts ListCategoriesByRegionIDOpts) ([]*domain.ExtendedCategory, error)
+	GetCategoryDataByRegions(ctx context.Context, opts GetCategoryDataByRegionsOpts) ([]*domain.RegionCategoryData, error)
 }
 
 type store struct {
@@ -20,8 +22,4 @@ type store struct {
 
 func NewStore(pool Pool) Store {
 	return &store{pool}
-}
-
-type UserStore interface {
-	CreateUser(ctx context.Context, user *domain.User) error
 }
