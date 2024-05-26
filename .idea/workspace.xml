@@ -6,13 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b79ef8c8-3ce0-4bd3-ad43-7c9b78feadbb" name="Changes" comment="map graph">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/db.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/api.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/api.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/controller/backfill_fgbu_data.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/api/controller/backfill_fgbu_data.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/pkg/constants/jwt.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/service/providers_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/service/providers_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,38 +63,19 @@
       <recent name="$PROJECT_DIR$/resources/config" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/test_cmd" />
       <recent name="$PROJECT_DIR$/internal/service" />
       <recent name="$PROJECT_DIR$/internal/domain/dto" />
       <recent name="$PROJECT_DIR$/internal/api" />
       <recent name="$PROJECT_DIR$/cmd" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build github.com/ougirez/diplom/test_cmd">
+  <component name="RunManager" selected="Go Build.go build github.com/ougirez/kursach/cmd">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="diplom" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build github.com/ougirez/diplom/cmd" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="diplom" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/ougirez/diplom/cmd" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/cmd/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build github.com/ougirez/diplom/test_cmd" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="diplom" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/ougirez/diplom/test_cmd" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/test_cmd/temp_main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build github.com/ougirez/kursach" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -139,8 +113,6 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build github.com/ougirez/diplom/test_cmd" />
-        <item itemvalue="Go Build.go build github.com/ougirez/diplom/cmd" />
         <item itemvalue="Go Build.go build github.com/ougirez/kursach/cmd" />
         <item itemvalue="Go Build.go build github.com/ougirez/kursach" />
       </list>
